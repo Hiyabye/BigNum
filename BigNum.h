@@ -228,4 +228,7 @@ public:
   /* GCD & LCM */
   BigNum gcd(const BigNum a, const BigNum b) const { return b == 0 ? a : gcd(b, a % b); }
   BigNum lcm(const BigNum a, const BigNum b) const { return a / gcd(a, b) * b; }
+
+  /* Absolute value */
+  BigNum abs(void) const { return BigNum(true, this->num); }
 };
