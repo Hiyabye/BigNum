@@ -158,7 +158,7 @@ public:
     return *this;
   }
 
-  /* Input/Output */
+  /* Input & Output */
   friend std::istream &operator>>(std::istream &is, BigNum &bn) {
     std::string s;
     is >> s;
@@ -224,4 +224,8 @@ public:
   bool operator>=(const BigNum &bn) const { return !(*this < bn); }
   bool operator>=(const long long &n) const { return !(*this < n); }
   bool operator>=(const std::string &s) const { return !(*this < s); }
+
+  /* GCD & LCM */
+  BigNum gcd(const BigNum a, const BigNum b) const { return b == 0 ? a : gcd(b, a % b); }
+  BigNum lcm(const BigNum a, const BigNum b) const { return a / gcd(a, b) * b; }
 };

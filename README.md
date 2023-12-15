@@ -31,7 +31,7 @@ Here's a quick example of how to use the `BigNum` class:
 #include <iostream>
 #include "BigNum.h"
 
-int main() {
+int main(void) {
   BigNum a("123456789012345678901234567890");
   BigNum b("987654321098765432109876543210");
 
@@ -51,9 +51,20 @@ Discover more about how `BigNum` can be used in the `examples` directory. Each e
 To continuously improve `BigNum`, our roadmap includes:
 
 - [x] Implement basic arithmetic operations
+- [x] Implement comparison operators
+- [x] Implement input and output operators
 - [ ] Implement advanced mathematical functions
+  - [x] GCD and LCM
+  - [ ] Power
+  - [ ] Square root
+  - [ ] Logarithm
+  - [ ] Trigonometric functions
+- [ ] Improve memory management
+- [ ] Improve error handling
 - [ ] Optimize for even faster computations
+- [ ] Improve documentation
 - [ ] Extend support for additional number systems
+- [ ] Extend support for additional data types
 - [ ] Develop a comprehensive suite of unit tests
 
 ## 🙌 Acknowledgements
