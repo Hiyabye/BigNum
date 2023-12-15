@@ -152,7 +152,13 @@ public:
   BigNum(const bool &s, const std::string &n) : sign(s), num(n) {}
 
   /* Assignments */
-  BigNum &operator=(const BigNum &bn) { return *this = BigNum(bn.sign, bn.num); }
+  BigNum &operator=(const BigNum &bn) {
+    if (this != &bn) {
+      this->sign = bn.sign;
+      this->num = bn.num;
+    }
+    return *this;
+  }
   BigNum &operator=(const long long &n) { return *this = BigNum(n); }
   BigNum &operator=(const std::string &s) { return *this = BigNum(s); }
 
@@ -178,6 +184,9 @@ public:
   }
   BigNum operator+(const long long &n) const { return *this + BigNum(n); }
   BigNum operator+(const std::string &s) const { return *this + BigNum(s); }
+  BigNum operator+=(const BigNum &bn) { return *this = *this + bn; }
+  BigNum operator+=(const long long &n) { return *this = *this + n; }
+  BigNum operator+=(const std::string &s) { return *this = *this + s; }
 
   /* Subtractions */
   BigNum operator-(const BigNum &bn) const {
@@ -187,21 +196,33 @@ public:
   }
   BigNum operator-(const long long &n) const { return *this - BigNum(n); }
   BigNum operator-(const std::string &s) const { return *this - BigNum(s); }
+  BigNum operator-=(const BigNum &bn) { return *this = *this - bn; }
+  BigNum operator-=(const long long &n) { return *this = *this - n; }
+  BigNum operator-=(const std::string &s) { return *this = *this - s; }
 
   /* Multiplications */
   BigNum operator*(const BigNum &bn) const { return BigNum(this->sign == bn.sign, mul(this->num, bn.num)); }
   BigNum operator*(const long long &n) const { return *this * BigNum(n); }
   BigNum operator*(const std::string &s) const { return *this * BigNum(s); }
+  BigNum operator*=(const BigNum &bn) { return *this = *this * bn; }
+  BigNum operator*=(const long long &n) { return *this = *this * n; }
+  BigNum operator*=(const std::string &s) { return *this = *this * s; }
 
   /* Divisions */
   BigNum operator/(const BigNum &bn) const { return BigNum(this->sign == bn.sign, div(this->num, bn.num)); }
   BigNum operator/(const long long &n) const { return *this / BigNum(n); }
   BigNum operator/(const std::string &s) const { return *this / BigNum(s); }
+  BigNum operator/=(const BigNum &bn) { return *this = *this / bn; }
+  BigNum operator/=(const long long &n) { return *this = *this / n; }
+  BigNum operator/=(const std::string &s) { return *this = *this / s; }
 
   /* Modulos */
   BigNum operator%(const BigNum &bn) const { return *this - (*this / bn) * bn; }
   BigNum operator%(const long long &n) const { return *this % BigNum(n); }
   BigNum operator%(const std::string &s) const { return *this % BigNum(s); }
+  BigNum operator%=(const BigNum &bn) { return *this = *this % bn; }
+  BigNum operator%=(const long long &n) { return *this = *this % n; }
+  BigNum operator%=(const std::string &s) { return *this = *this % s; }
 
   /* Comparisons */
   bool operator==(const BigNum &bn) const { return this->num == bn.num && this->sign == bn.sign; }
@@ -235,9 +256,9 @@ BigNum abs(const BigNum &bn) { return BigNum(true, bn.num); }
 BigNum pow(BigNum base, BigNum exp) {
   BigNum res(1);
   while (exp > 0) {
-    if (exp % 2 == 1) res = res * base;
-    base = base * base;
-    exp = exp / 2;
+    if (exp % 2 == 1) res *= base;
+    base *= base;
+    exp /= 2;
   }
   return res;
 }
