@@ -55,7 +55,8 @@ To continuously improve `BigNum`, our roadmap includes:
 - [x] Implement input and output operators
 - [ ] Implement advanced mathematical functions
   - [x] GCD and LCM
-  - [ ] Power
+  - [x] Absolute value
+  - [x] Power
   - [ ] Square root
   - [ ] Logarithm
   - [ ] Trigonometric functions

@@ -4,10 +4,11 @@
 #include <string>
 
 class BigNum {
-private:
+public:
   std::string num;
   bool sign; // true: '+', false: '-'
 
+private:
   // Assume s is non-negative
   // Remove leading zeros
   static std::string trim(std::string &s) {
@@ -151,12 +152,9 @@ public:
   BigNum(const bool &s, const std::string &n) : sign(s), num(n) {}
 
   /* Assignments */
-  BigNum &operator=(const BigNum &bn) {
-    if (this == &bn) return *this; // Self-assignment check
-    num = bn.num;
-    sign = bn.sign;
-    return *this;
-  }
+  BigNum &operator=(const BigNum &bn) { return *this = BigNum(bn.sign, bn.num); }
+  BigNum &operator=(const long long &n) { return *this = BigNum(n); }
+  BigNum &operator=(const std::string &s) { return *this = BigNum(s); }
 
   /* Input & Output */
   friend std::istream &operator>>(std::istream &is, BigNum &bn) {
@@ -224,11 +222,22 @@ public:
   bool operator>=(const BigNum &bn) const { return !(*this < bn); }
   bool operator>=(const long long &n) const { return !(*this < n); }
   bool operator>=(const std::string &s) const { return !(*this < s); }
-
-  /* GCD & LCM */
-  BigNum gcd(const BigNum a, const BigNum b) const { return b == 0 ? a : gcd(b, a % b); }
-  BigNum lcm(const BigNum a, const BigNum b) const { return a / gcd(a, b) * b; }
-
-  /* Absolute value */
-  BigNum abs(void) const { return BigNum(true, this->num); }
 };
+
+/* GCD & LCM */
+BigNum gcd(const BigNum &a, const BigNum &b) { return b == 0 ? a : gcd(b, a % b); }
+BigNum lcm(const BigNum &a, const BigNum &b) { return a / gcd(a, b) * b; }
+
+/* Absolute value */
+BigNum abs(const BigNum &bn) { return BigNum(true, bn.num); }
+
+/* Power */
+BigNum pow(BigNum base, BigNum exp) {
+  BigNum res(1);
+  while (exp > 0) {
+    if (exp % 2 == 1) res = res * base;
+    base = base * base;
+    exp = exp / 2;
+  }
+  return res;
+}
