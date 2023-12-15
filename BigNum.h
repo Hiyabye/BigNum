@@ -8,108 +8,90 @@ private:
   std::string num;
   bool sign; // true: '+', false: '-'
 
-  // Assume a >= b >= 0
-  std::string add(std::string a, std::string b) const {
-    // Edge cases
-    if (a == "0") return b;
-    if (b == "0") return a;
+  // Assume s is non-negative
+  // Remove leading zeros
+  static std::string trim(std::string &s) {
+    int idx = s.find_first_not_of('0');
+    return idx != std::string::npos ? s.substr(idx) : "0";
+  }
 
+  // Assume a, b are non-negative
+  // Pad a and b to the same length
+  static void padding(std::string &a, std::string &b) {
+    if (a.length() < b.length()) a.insert(0, std::string(b.length() - a.length(), '0'));
+    if (a.length() > b.length()) b.insert(0, std::string(a.length() - b.length(), '0'));
+  }
+
+  // Assume a, b are non-negative and a >= b
+  static std::string add(std::string a, std::string b) {
     // Threshold for simple addition
     if (a.length() <= 18 && b.length() <= 18) {
       return std::to_string(std::stoll(a) + std::stoll(b));
     }
-
-    // Padding
-    while (a.length() < b.length()) a = '0' + a;
-    while (b.length() < a.length()) b = '0' + b;
+    padding(a, b);
 
     // String addition
     std::string c = "";
-    int carry = 0;
-    for (int i=0; i<a.length() || i<b.length(); i++) {
-      int aDigit = i < a.length() ? a[a.length()-i-1] - '0' : 0;
-      int bDigit = i < b.length() ? b[b.length()-i-1] - '0' : 0;
-      int sum = aDigit + bDigit + carry;
+    int carry = 0, sum = 0;
+    for (int i = a.length() - 1; i >= 0; --i) {
+      sum = (a[i] - '0') + (b[i] - '0') + carry;
       carry = sum / 10;
-      c = (char)(sum % 10 + '0') + c;
+      c.insert(0, 1, (char)(sum % 10 + '0'));
     }
-    if (carry) c = (char)(carry + '0') + c;
+    if (carry) c.insert(0, 1, (char)(carry + '0'));
 
-    return c;
+    return trim(c);
   }
 
-  // Assume a >= b >= 0
-  std::string sub(std::string a, std::string b) const {
-    // Edge cases
-    if (a == b) return "0";
-    if (b == "0") return a;
-
+  // Assume a, b are non-negative and a >= b
+  static std::string sub(std::string a, std::string b) {
     // Threshold for simple subtraction
     if (a.length() <= 18 && b.length() <= 18) {
       return std::to_string(std::stoll(a) - std::stoll(b));
     }
-
-    // Padding
-    while (a.length() < b.length()) a = '0' + a;
-    while (b.length() < a.length()) b = '0' + b;
+    padding(a, b);
 
     // String subtraction
     std::string c = "";
-    int borrow = 0;
-    for (int i=0; i<a.length(); i++) {
-      int aDigit = a[a.length()-i-1] - '0';
-      int bDigit = b[b.length()-i-1] - '0';
-      int diff = aDigit - bDigit - borrow;
-      borrow = diff < 0;
-      c = (char)(diff + borrow * 10 + '0') + c;
+    int borrow = 0, diff = 0;
+    for (int i = a.length() - 1; i >= 0; --i) {
+      diff = (a[i] - '0') - (b[i] - '0') - borrow;
+      borrow = diff < 0 ? 1 : 0;
+      c.insert(0, 1, (char)(diff + borrow * 10 + '0'));
     }
 
-    // Remove leading zeros
-    while (c[0] == '0') c = c.substr(1);
-
-    return c;
+    return trim(c);
   }
 
-  // Assume a, b >= 0
-  std::string mul(std::string a, std::string b) const {
+  // Assume a, b are non-negative
+  static std::string mul(std::string a, std::string b) {
     // Remove leading zeros
-    while (a[0] == '0') a = a.substr(1);
-    if (a == "") a = "0";
-    while (b[0] == '0') b = b.substr(1);
-    if (b == "") b = "0";
-
-    // Edge cases
-    if (a == "0" || b == "0") return "0";
-    if (a == "1") return b;
-    if (b == "1") return a;
+    a = trim(a);
+    b = trim(b);
 
     // Threshold for simple multiplication
     if (a.length() + b.length() <= 18) {
       return std::to_string(std::stoll(a) * std::stoll(b));
     }
-
-    // Padding
-    // TODO: Optimize padding
-    while (a.length() < b.length()) a = '0' + a;
-    while (b.length() < a.length()) b = '0' + b;
+    padding(a, b);
 
     // Karatsuba algorithm
-    int half = (a.length() > b.length() ? a.length() : b.length()) / 2;
+    int half = (a.length() > b.length() ? a.length() : b.length()) >> 1;
     int aHalf = a.length() - half, bHalf = b.length() - half;
     std::string p1 = mul(a.substr(0, aHalf), b.substr(0, bHalf));
     std::string p2 = mul(a.substr(aHalf), b.substr(bHalf));
     std::string p3 = mul(add(a.substr(0, aHalf), a.substr(aHalf)), add(b.substr(0, bHalf), b.substr(bHalf)));
-    std::string c = add(p1 + std::string(2 * half, '0'), p2);
+    std::string c = add(p1 + std::string(half << 1, '0'), p2);
     c = add(c, sub(p3, add(p1, p2)) + std::string(half, '0'));
 
-    return c;
+    return trim(c);
   }
 
-  // Assume a, b >= 0
-  std::string avg(std::string a, std::string b) const {
+  // Assume a, b are non-negative
+  static std::string avg(const std::string &a, const std::string &b) {
     // Threshold for simple average
     if (a.length() <= 18 && b.length() <= 18) {
-      return std::to_string((std::stoll(a) + std::stoll(b)) / 2);
+      return std::to_string((std::stoll(a) + std::stoll(b)) >> 1);
     }
 
     // String addition
@@ -118,26 +100,20 @@ private:
 
     // Divide by 2
     int carry = 0;
-    for (int i=0; i<sum.length(); i++) {
+    for (int i = 0; i < sum.length(); ++i) {
       int digit = sum[i] - '0';
-      c[i] = (char)((digit + carry * 10) / 2 + '0');
-      carry = (digit + carry * 10) % 2;
+      c[i] = (char)((digit + carry * 10) >> 1 + '0');
+      carry = (digit + carry * 10) & 1;
     }
 
-    // Remove leading zeros
-    while (c[0] == '0') c = c.substr(1);
-    if (c == "") c = "0";
-
-    return c;
+    return trim(c);
   }
 
-  // Assume a, b >= 0
-  std::string div(const std::string &a, const std::string &b) const {
+  // Assume a, b are non-negative
+  static std::string div(const std::string &a, const std::string &b) {
     // Edge cases
-    if (a == "0") return "0";
     if (b == "0") throw "Division by zero";
-    if (a == b) return "1";
-    if (a.length() < b.length() || (a.length() == b.length() && a < b)) return "0";
+    if (a == "0" || a.length() < b.length() || (a.length() == b.length() && a < b)) return "0";
 
     // Threshold for simple division
     if (a.length() <= 18 && b.length() <= 18) {
@@ -172,15 +148,17 @@ public:
   BigNum(const BigNum &bn) : num(bn.num), sign(bn.sign) {}
   BigNum(const long long &n) : sign(n >= 0), num(std::to_string(n)) {}
   BigNum(const std::string &s) : sign(s[0] != '-'), num(s[0] == '-' ? s.substr(1) : s) {}
+  BigNum(const bool &s, const std::string &n) : sign(s), num(n) {}
 
   /* Assignments */
   BigNum &operator=(const BigNum &bn) {
+    if (this == &bn) return *this; // Self-assignment check
     num = bn.num;
     sign = bn.sign;
     return *this;
   }
 
-  /* I/O */
+  /* Input/Output */
   friend std::istream &operator>>(std::istream &is, BigNum &bn) {
     std::string s;
     is >> s;
@@ -196,184 +174,54 @@ public:
 
   /* Additions */
   BigNum operator+(const BigNum &bn) {
-    BigNum res;
-
-    if (this->sign == bn.sign) {
-      res.sign = this->sign;
-      res.num = add(this->num, bn.num);
-    } else if (this->num > bn.num) {
-      res.sign = this->sign;
-      res.num = sub(this->num, bn.num);
-    } else {
-      res.sign = bn.sign;
-      res.num = sub(bn.num, this->num);
-    }
-    
-    return res;
+    if (this->sign == bn.sign)   return BigNum(this->sign, add(this->num, bn.num));
+    else if (this->num > bn.num) return BigNum(this->sign, sub(this->num, bn.num));
+    else                         return BigNum(bn.sign, sub(bn.num, this->num));
   }
-
-  BigNum operator+(const long long &n) {
-    return *this + BigNum(n);
-  }
-
-  BigNum operator+(const std::string &s) {
-    return *this + BigNum(s);
-  }
+  BigNum operator+(const long long &n) { return *this + BigNum(n); }
+  BigNum operator+(const std::string &s) { return *this + BigNum(s); }
 
   /* Subtractions */
   BigNum operator-(const BigNum &bn) {
-    BigNum res;
-
-    if (this->sign != bn.sign) {
-      res.sign = this->sign;
-      res.num = add(this->num, bn.num);
-    } else if (*this >= bn) {
-      res.sign = this->sign;
-      res.num = sub(this->num, bn.num);
-    } else {
-      res.sign = !this->sign;
-      res.num = sub(bn.num, this->num);
-    }
-
-    return res;
+    if (this->sign != bn.sign) return BigNum(this->sign, add(this->num, bn.num));
+    else if (*this >= bn)      return BigNum(this->sign, sub(this->num, bn.num));
+    else                       return BigNum(!this->sign, sub(bn.num, this->num));
   }
-
-  BigNum operator-(const long long &n) {
-    return *this - BigNum(n);
-  }
-
-  BigNum operator-(const std::string &s) {
-    return *this - BigNum(s);
-  }
+  BigNum operator-(const long long &n) { return *this - BigNum(n); }
+  BigNum operator-(const std::string &s) { return *this - BigNum(s); }
 
   /* Multiplications */
-  BigNum operator*(const BigNum &bn) {
-    BigNum res;
-
-    res.sign = this->sign == bn.sign;
-    res.num = mul(this->num, bn.num);
-
-    return res;
-  }
-
-  BigNum operator*(const long long &n) {
-    return *this * BigNum(n);
-  }
-
-  BigNum operator*(const std::string &s) {
-    return *this * BigNum(s);
-  }
+  BigNum operator*(const BigNum &bn) { return BigNum(this->sign == bn.sign, mul(this->num, bn.num)); }
+  BigNum operator*(const long long &n) { return *this * BigNum(n); }
+  BigNum operator*(const std::string &s) { return *this * BigNum(s); }
 
   /* Divisions */
-  BigNum operator/(const BigNum &bn) {
-    BigNum res;
-
-    res.sign = this->sign == bn.sign;
-    res.num = div(this->num, bn.num);
-
-    return res;
-  }
-
-  BigNum operator/(const long long &n) {
-    return *this / BigNum(n);
-  }
-
-  BigNum operator/(const std::string &s) {
-    return *this / BigNum(s);
-  }
+  BigNum operator/(const BigNum &bn) { return BigNum(this->sign == bn.sign, div(this->num, bn.num)); }
+  BigNum operator/(const long long &n) { return *this / BigNum(n); }
+  BigNum operator/(const std::string &s) { return *this / BigNum(s); }
 
   /* Modulos */
-  BigNum operator%(const BigNum &bn) {
-    BigNum res;
-
-    // Edge cases
-    if (bn.num == "0") throw "Division by zero";
-    if (this->num == "0") return BigNum(0);
-
-    // Main cases
-    return *this - (*this / bn) * bn;
-  }
-
-  BigNum operator%(const long long &n) {
-    return *this % BigNum(n);
-  }
-
-  BigNum operator%(const std::string &s) {
-    return *this % BigNum(s);
-  }
+  BigNum operator%(const BigNum &bn) { return *this - (*this / bn) * bn; }
+  BigNum operator%(const long long &n) { return *this % BigNum(n); }
+  BigNum operator%(const std::string &s) { return *this % BigNum(s); }
 
   /* Comparisons */
-  bool operator==(const BigNum &bn) {
-    return this->num == bn.num && this->sign == bn.sign;
-  }
-
-  bool operator==(const long long &n) {
-    return *this == BigNum(n);
-  }
-
-  bool operator==(const std::string &s) {
-    return *this == BigNum(s);
-  }
-
-  bool operator!=(const BigNum &bn) {
-    return !(*this == bn);
-  }
-
-  bool operator!=(const long long &n) {
-    return !(*this == n);
-  }
-
-  bool operator!=(const std::string &s) {
-    return !(*this == s);
-  }
-
-  bool operator<(const BigNum &bn) {
-    if (this->sign != bn.sign) return !this->sign;
-    if (this->num.length() != bn.num.length()) return this->num.length() < bn.num.length();
-    return this->num < bn.num;
-  }
-
-  bool operator<(const long long &n) {
-    return *this < BigNum(n);
-  }
-
-  bool operator<(const std::string &s) {
-    return *this < BigNum(s);
-  }
-
-  bool operator<=(const BigNum &bn) {
-    return *this < bn || *this == bn;
-  }
-
-  bool operator<=(const long long &n) {
-    return *this < n || *this == n;
-  }
-
-  bool operator<=(const std::string &s) {
-    return *this < s || *this == s;
-  }
-
-  bool operator>(const BigNum &bn) {
-    return !(*this <= bn);
-  }
-
-  bool operator>(const long long &n) {
-    return !(*this <= n);
-  }
-
-  bool operator>(const std::string &s) {
-    return !(*this <= s);
-  }
-
-  bool operator>=(const BigNum &bn) {
-    return !(*this < bn);
-  }
-
-  bool operator>=(const long long &n) {
-    return !(*this < n);
-  }
-
-  bool operator>=(const std::string &s) {
-    return !(*this < s);
-  }
+  bool operator==(const BigNum &bn) { return this->num == bn.num && this->sign == bn.sign; }
+  bool operator==(const long long &n) { return *this == BigNum(n); }
+  bool operator==(const std::string &s) { return *this == BigNum(s); }
+  bool operator!=(const BigNum &bn) { return !(*this == bn); }
+  bool operator!=(const long long &n) { return !(*this == n); }
+  bool operator!=(const std::string &s) { return !(*this == s); }
+  bool operator<(const BigNum &bn) { return this->sign != bn.sign ? !this->sign : this->num.length() != bn.num.length() ? this->num.length() < bn.num.length() : this->num < bn.num; }
+  bool operator<(const long long &n) { return *this < BigNum(n); }
+  bool operator<(const std::string &s) { return *this < BigNum(s); }
+  bool operator<=(const BigNum &bn) { return *this < bn || *this == bn; }
+  bool operator<=(const long long &n) { return *this < n || *this == n; }
+  bool operator<=(const std::string &s) { return *this < s || *this == s; }
+  bool operator>(const BigNum &bn) { return !(*this <= bn); }
+  bool operator>(const long long &n) { return !(*this <= n); }
+  bool operator>(const std::string &s) { return !(*this <= s); }
+  bool operator>=(const BigNum &bn) { return !(*this < bn); }
+  bool operator>=(const long long &n) { return !(*this < n); }
+  bool operator>=(const std::string &s) { return !(*this < s); }
 };
