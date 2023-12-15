@@ -102,7 +102,7 @@ private:
     int carry = 0;
     for (int i = 0; i < sum.length(); ++i) {
       int digit = sum[i] - '0';
-      c[i] = (char)((digit + carry * 10) >> 1 + '0');
+      c[i] = (char)(((digit + carry * 10) >> 1) + '0');
       carry = (digit + carry * 10) & 1;
     }
 
@@ -122,7 +122,7 @@ private:
 
     // Initial guess
     std::string r = "1";
-    r += std::string(a.length() - b.length(), '0');
+    r += std::string(a.length() - b.length() + 1, '0');
 
     // Newton's method
     std::string l = "1";
@@ -173,55 +173,55 @@ public:
   }
 
   /* Additions */
-  BigNum operator+(const BigNum &bn) {
+  BigNum operator+(const BigNum &bn) const {
     if (this->sign == bn.sign)   return BigNum(this->sign, add(this->num, bn.num));
     else if (this->num > bn.num) return BigNum(this->sign, sub(this->num, bn.num));
     else                         return BigNum(bn.sign, sub(bn.num, this->num));
   }
-  BigNum operator+(const long long &n) { return *this + BigNum(n); }
-  BigNum operator+(const std::string &s) { return *this + BigNum(s); }
+  BigNum operator+(const long long &n) const { return *this + BigNum(n); }
+  BigNum operator+(const std::string &s) const { return *this + BigNum(s); }
 
   /* Subtractions */
-  BigNum operator-(const BigNum &bn) {
+  BigNum operator-(const BigNum &bn) const {
     if (this->sign != bn.sign) return BigNum(this->sign, add(this->num, bn.num));
     else if (*this >= bn)      return BigNum(this->sign, sub(this->num, bn.num));
     else                       return BigNum(!this->sign, sub(bn.num, this->num));
   }
-  BigNum operator-(const long long &n) { return *this - BigNum(n); }
-  BigNum operator-(const std::string &s) { return *this - BigNum(s); }
+  BigNum operator-(const long long &n) const { return *this - BigNum(n); }
+  BigNum operator-(const std::string &s) const { return *this - BigNum(s); }
 
   /* Multiplications */
-  BigNum operator*(const BigNum &bn) { return BigNum(this->sign == bn.sign, mul(this->num, bn.num)); }
-  BigNum operator*(const long long &n) { return *this * BigNum(n); }
-  BigNum operator*(const std::string &s) { return *this * BigNum(s); }
+  BigNum operator*(const BigNum &bn) const { return BigNum(this->sign == bn.sign, mul(this->num, bn.num)); }
+  BigNum operator*(const long long &n) const { return *this * BigNum(n); }
+  BigNum operator*(const std::string &s) const { return *this * BigNum(s); }
 
   /* Divisions */
-  BigNum operator/(const BigNum &bn) { return BigNum(this->sign == bn.sign, div(this->num, bn.num)); }
-  BigNum operator/(const long long &n) { return *this / BigNum(n); }
-  BigNum operator/(const std::string &s) { return *this / BigNum(s); }
+  BigNum operator/(const BigNum &bn) const { return BigNum(this->sign == bn.sign, div(this->num, bn.num)); }
+  BigNum operator/(const long long &n) const { return *this / BigNum(n); }
+  BigNum operator/(const std::string &s) const { return *this / BigNum(s); }
 
   /* Modulos */
-  BigNum operator%(const BigNum &bn) { return *this - (*this / bn) * bn; }
-  BigNum operator%(const long long &n) { return *this % BigNum(n); }
-  BigNum operator%(const std::string &s) { return *this % BigNum(s); }
+  BigNum operator%(const BigNum &bn) const { return *this - (*this / bn) * bn; }
+  BigNum operator%(const long long &n) const { return *this % BigNum(n); }
+  BigNum operator%(const std::string &s) const { return *this % BigNum(s); }
 
   /* Comparisons */
-  bool operator==(const BigNum &bn) { return this->num == bn.num && this->sign == bn.sign; }
-  bool operator==(const long long &n) { return *this == BigNum(n); }
-  bool operator==(const std::string &s) { return *this == BigNum(s); }
-  bool operator!=(const BigNum &bn) { return !(*this == bn); }
-  bool operator!=(const long long &n) { return !(*this == n); }
-  bool operator!=(const std::string &s) { return !(*this == s); }
-  bool operator<(const BigNum &bn) { return this->sign != bn.sign ? !this->sign : this->num.length() != bn.num.length() ? this->num.length() < bn.num.length() : this->num < bn.num; }
-  bool operator<(const long long &n) { return *this < BigNum(n); }
-  bool operator<(const std::string &s) { return *this < BigNum(s); }
-  bool operator<=(const BigNum &bn) { return *this < bn || *this == bn; }
-  bool operator<=(const long long &n) { return *this < n || *this == n; }
-  bool operator<=(const std::string &s) { return *this < s || *this == s; }
-  bool operator>(const BigNum &bn) { return !(*this <= bn); }
-  bool operator>(const long long &n) { return !(*this <= n); }
-  bool operator>(const std::string &s) { return !(*this <= s); }
-  bool operator>=(const BigNum &bn) { return !(*this < bn); }
-  bool operator>=(const long long &n) { return !(*this < n); }
-  bool operator>=(const std::string &s) { return !(*this < s); }
+  bool operator==(const BigNum &bn) const { return this->num == bn.num && this->sign == bn.sign; }
+  bool operator==(const long long &n) const { return *this == BigNum(n); }
+  bool operator==(const std::string &s) const { return *this == BigNum(s); }
+  bool operator!=(const BigNum &bn) const { return !(*this == bn); }
+  bool operator!=(const long long &n) const { return !(*this == n); }
+  bool operator!=(const std::string &s) const { return !(*this == s); }
+  bool operator<(const BigNum &bn) const { return this->sign != bn.sign ? !this->sign : this->num.length() != bn.num.length() ? this->num.length() < bn.num.length() : this->num < bn.num; }
+  bool operator<(const long long &n) const { return *this < BigNum(n); }
+  bool operator<(const std::string &s) const { return *this < BigNum(s); }
+  bool operator<=(const BigNum &bn) const { return *this < bn || *this == bn; }
+  bool operator<=(const long long &n) const { return *this < n || *this == n; }
+  bool operator<=(const std::string &s) const { return *this < s || *this == s; }
+  bool operator>(const BigNum &bn) const { return !(*this <= bn); }
+  bool operator>(const long long &n) const { return !(*this <= n); }
+  bool operator>(const std::string &s) const { return !(*this <= s); }
+  bool operator>=(const BigNum &bn) const { return !(*this < bn); }
+  bool operator>=(const long long &n) const { return !(*this < n); }
+  bool operator>=(const std::string &s) const { return !(*this < s); }
 };
