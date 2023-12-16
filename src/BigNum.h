@@ -12,6 +12,7 @@ public:
   BigNum(void);
   BigNum(const BigNum &bn);
   BigNum(const long long &n);
+  BigNum(const long double &n);
   BigNum(const std::string &s);
   BigNum(const bool &s, const std::string &n);
 
@@ -85,12 +86,13 @@ public:
   bool operator>=(const std::string &s) const;
 
   // Helper functions
-  std::string trim(std::string &s);
+  void trim(std::string &s);
   void padding(std::string &a, std::string &b);
 
   // Basic operations
   std::string add(std::string a, std::string b);
   std::string sub(std::string a, std::string b);
+  std::string karatsuba(std::string a, std::string b);
   std::string mul(std::string a, std::string b);
   std::string avg(const std::string &a, const std::string &b);
   std::string div(const std::string &a, const std::string &b);

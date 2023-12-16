@@ -54,7 +54,7 @@ BigNum abs(const BigNum &bn) {
  * @todo Support decimal numbers
 */
 BigNum pow(BigNum base, BigNum exp) {
-  BigNum res(1);
+  BigNum res(1LL);
   while (exp > 0) {
     if (exp % 2 == 1) res *= base;
     base *= base;

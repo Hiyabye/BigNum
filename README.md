@@ -7,8 +7,8 @@
 ## 🌟 Features
 
 - **Infinite Size**: Utilizes `std::string` for representing numbers, offering virtually unlimited size.
-- **Basic Operations**: Seamlessly performs addition, subtraction, multiplication, division, and modulo operations.
 - **High Precision**: Maintains accuracy for extremely large calculations, a necessity in competitive programming.
+- **Decimal Support**: Supports decimal numbers, allowing for precise calculations.
 - **Efficient Performance**: Optimized for quick computations, crucial for time-sensitive contests.
 
 ## 🛠 Installation
@@ -55,13 +55,11 @@ Discover more about how `BigNum` can be used in the `examples` directory. Each e
 
 To continuously improve `BigNum`, our roadmap includes:
 
-- [x] Implement basic arithmetic operations
-- [x] Implement comparison operators
-- [x] Implement input and output operators
+- [x] Basic arithmetic operations, comparison operators, and input/output operators
 - [x] Modularize code into separate files
-- [x] CMake support
-- [x] Develop a comprehensive suite of unit tests using Google Test
-- [x] C/C++ CI support using GitHub Actions
+- [x] Support for CMake
+- [x] C/C++ CI support using GoogleTest and GitHub Actions
+- [x] Support for decimal numbers
 - [ ] Implement advanced mathematical functions
   - [x] GCD and LCM
   - [x] Absolute value
