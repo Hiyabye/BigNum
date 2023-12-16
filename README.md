@@ -61,6 +61,7 @@ To continuously improve `BigNum`, our roadmap includes:
 - [x] Modularize code into separate files
 - [x] CMake support
 - [x] Develop a comprehensive suite of unit tests using Google Test
+- [x] C/C++ CI support using GitHub Actions
 - [ ] Implement advanced mathematical functions
   - [x] GCD and LCM
   - [x] Absolute value
