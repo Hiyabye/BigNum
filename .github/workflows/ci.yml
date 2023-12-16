@@ -1,0 +1,31 @@
+name: C/C++ CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        compiler: [gcc, clang]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up CMake
+      uses: actions/setup-cmake@v1
+      with:
+        cmake-version: '3.18.x'
+      
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_C_COMPILER=${{ matrix.compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+        cmake --build .
+    
+    - name: Test
+      run: |
+        cd build
+        ./BigNumTest
