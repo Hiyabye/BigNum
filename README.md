@@ -34,15 +34,25 @@ Here's a quick example of how to use the `BigNum` class:
 
 ```cpp
 #include <iostream>
+#include <vector>
 #include "BigNum.h"
 
-int main(void) {
-  BigNum a("123456789012345678901234567890");
-  BigNum b("987654321098765432109876543210");
+using namespace std;
 
-  BigNum c = a + b;
-  std::cout << c << std::endl;
-  
+int main(void) {
+  // Initialize the first two numbers of the Fibonacci sequence
+  vector<BigNum> fib(101);
+  fib[0] = BigNum("0");
+  fib[1] = BigNum("1");
+
+  // Calculate the rest of the Fibonacci sequence
+  for (int i = 2; i <= 100; ++i) {
+    fib[i] = fib[i - 1] + fib[i - 2];
+  }
+
+  // Print the 100th Fibonacci number
+  cout << fib[100] << endl; // 354224848179261915075
+
   return 0;
 }
 ```
@@ -60,6 +70,7 @@ To continuously improve `BigNum`, our roadmap includes:
 - [x] Support for CMake
 - [x] C/C++ CI support using GoogleTest and GitHub Actions
 - [x] Support for decimal numbers
+- [ ] Add more examples
 - [ ] Implement advanced mathematical functions
   - [x] GCD and LCM
   - [x] Absolute value
