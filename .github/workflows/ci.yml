@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@latest
+      uses: actions/checkout@v4
 
     - name: Setup CMake and Ninja
       uses: lukka/get-cmake@latest
