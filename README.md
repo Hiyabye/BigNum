@@ -13,15 +13,20 @@
 
 ## 🛠 Installation
 
-Integrating `BigNum` into your project is straightforward.
+Integrating `BigNum` into your project can be done based on your needs.
 
-Just download and include the `BigNum.h` header file in your project.
+### 📦 Using CMake
 
-```cpp
-#include "BigNum.h"
+If you're using CMake, you can simply add `BigNum` as a dependency in your `CMakeLists.txt` file.
+
+```cmake
+add_subdirectory(BigNum)
+target_link_libraries(<your-target> BigNum)
 ```
 
-For competitive programming, you can simply copy and paste the entire `BigNum` class into your contest file.
+### 👑 Competitve Programming
+
+For competitive programming, you can simply use the `BigNum-contest.cpp` file as a starting point for your contest file. This file contains the entire `BigNum` class, along with a few other useful functions.
 
 ## 💡 Usage
 
@@ -53,6 +58,9 @@ To continuously improve `BigNum`, our roadmap includes:
 - [x] Implement basic arithmetic operations
 - [x] Implement comparison operators
 - [x] Implement input and output operators
+- [x] Modularize code into separate files
+- [x] CMake support
+- [ ] Develop a comprehensive suite of unit tests using Google Test
 - [ ] Implement advanced mathematical functions
   - [x] GCD and LCM
   - [x] Absolute value
@@ -63,10 +71,9 @@ To continuously improve `BigNum`, our roadmap includes:
 - [ ] Improve memory management
 - [ ] Improve error handling
 - [ ] Optimize for even faster computations
-- [ ] Improve documentation
+- [ ] Improve documentation using Doxygen
 - [ ] Extend support for additional number systems
 - [ ] Extend support for additional data types
-- [ ] Develop a comprehensive suite of unit tests
 
 ## 🙌 Acknowledgements
 
