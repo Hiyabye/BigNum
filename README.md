@@ -60,7 +60,7 @@ To continuously improve `BigNum`, our roadmap includes:
 - [x] Implement input and output operators
 - [x] Modularize code into separate files
 - [x] CMake support
-- [ ] Develop a comprehensive suite of unit tests using Google Test
+- [x] Develop a comprehensive suite of unit tests using Google Test
 - [ ] Implement advanced mathematical functions
   - [x] GCD and LCM
   - [x] Absolute value
@@ -80,7 +80,10 @@ To continuously improve `BigNum`, our roadmap includes:
 Huge help from the following resources and communities:
 
 - [readme.so](https://readme.so/) for README formatting tools.
- 
+- [shields.io](https://shields.io/) for badges.
+- [gitignore.io](https://www.toptal.com/developers/gitignore) for `.gitignore` files.
+- [Google Test](https://github.com/google/googletest) for unit testing.
+
 ## 📄 License
 
 This project is open-sourced under the MIT License. See the [LICENSE](LICENSE) file for more details.

@@ -8,22 +8,24 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        compiler: [gcc, clang]
+        compiler: [g++, clang++]
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-    - name: Set up CMake
-      uses: actions/setup-cmake@v1
+    - name: Set up CMake and Ninja
+      uses: lukka/get-cmake@latest
       with:
-        cmake-version: '3.18.x'
+        cmakeVersion: latestrc
+        ninjaVersion: latest
       
     - name: Build
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_C_COMPILER=${{ matrix.compiler }} -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
-        cmake --build .
+        cmake .. -G Ninja -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+        ninja
     
     - name: Test
       run: |
