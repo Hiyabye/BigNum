@@ -9,21 +9,40 @@ public:
   bool sign; // true: '+', false: '-'
 
 private:
-  // Assume s is non-negative
-  // Remove leading zeros
+  /**
+   * @brief Remove leading and trailing zeros
+   * @details Assume s is non-negative as we process sign separately
+   *          This function is used in add, sub, mul, avg
+   * @param s String to be trimmed
+   * @return Trimmed string
+   * @todo Support decimal numbers
+  */
   static std::string trim(std::string &s) {
     int idx = s.find_first_not_of('0');
     return idx != std::string::npos ? s.substr(idx) : "0";
   }
 
-  // Assume a, b are non-negative
-  // Pad a and b to the same length
+  /**
+   * @brief Pad a and b to the same length
+   * @details Assume a, b are non-negative
+   *          This function is used in add, sub, mul
+   * @param a First string
+   * @param b Second string
+   * @todo Support decimal numbers
+  */
   static void padding(std::string &a, std::string &b) {
     if (a.length() < b.length()) a.insert(0, std::string(b.length() - a.length(), '0'));
     if (a.length() > b.length()) b.insert(0, std::string(a.length() - b.length(), '0'));
   }
 
-  // Assume a, b are non-negative and a >= b
+  /**
+   * @brief Add two strings digit by digit
+   * @details Assume a, b are non-negative and a >= b
+   * @param a First string
+   * @param b Second string
+   * @return Sum of a and b
+   * @todo Support decimal numbers
+  */
   static std::string add(std::string a, std::string b) {
     // Threshold for simple addition
     if (a.length() <= 18 && b.length() <= 18) {
@@ -44,7 +63,14 @@ private:
     return trim(c);
   }
 
-  // Assume a, b are non-negative and a >= b
+  /**
+   * @brief Subtract two strings digit by digit
+   * @details Assume a, b are non-negative and a >= b
+   * @param a First string
+   * @param b Second string
+   * @return Difference of a and b
+   * @todo Support decimal numbers
+  */
   static std::string sub(std::string a, std::string b) {
     // Threshold for simple subtraction
     if (a.length() <= 18 && b.length() <= 18) {
@@ -64,7 +90,15 @@ private:
     return trim(c);
   }
 
-  // Assume a, b are non-negative
+  /**
+   * @brief Multiply two strings using Karatsuba algorithm
+   * @details Assume a, b are non-negative
+   * @param a First string
+   * @param b Second string
+   * @return Product of a and b
+   * @see https://en.wikipedia.org/wiki/Karatsuba_algorithm
+   * @todo Support decimal numbers
+  */
   static std::string mul(std::string a, std::string b) {
     // Remove leading zeros
     a = trim(a);
@@ -88,7 +122,15 @@ private:
     return trim(c);
   }
 
-  // Assume a, b are non-negative
+  /**
+   * @brief Average two strings
+   * @details Assume a, b are non-negative
+   *          Helper function for div
+   * @param a First string
+   * @param b Second string
+   * @return Average of a and b
+   * @todo Support decimal numbers
+  */
   static std::string avg(const std::string &a, const std::string &b) {
     // Threshold for simple average
     if (a.length() <= 18 && b.length() <= 18) {
@@ -110,7 +152,16 @@ private:
     return trim(c);
   }
 
-  // Assume a, b are non-negative
+  /**
+   * @brief Divide two strings using Newton-Raphson method
+   * @details Assume a, b are non-negative
+   * @param a First string
+   * @param b Second string
+   * @return Quotient of a and b
+   * @throws Division by zero
+   * @see https://en.wikipedia.org/wiki/Division_algorithm#Newton.E2.80.93Raphson_division
+   * @todo Support decimal numbers
+  */
   static std::string div(const std::string &a, const std::string &b) {
     // Edge cases
     if (b == "0") throw "Division by zero";
@@ -121,11 +172,11 @@ private:
       return std::to_string(std::stoll(a) / std::stoll(b));
     }
 
-    // Initial guess
+    // Initial guess - 10 ^ (a.length() - b.length())
     std::string r = "1";
     r += std::string(a.length() - b.length() + 1, '0');
 
-    // Newton's method
+    // Newton-Raphson method
     std::string l = "1";
     std::string m = avg(l, r);
     while (l != m && m != r) {
@@ -136,7 +187,7 @@ private:
       m = avg(l, r);
     }
 
-    // Correction step
+    // Correction step - without this step, the result may be off by 1
     while (mul(m, b).length() < a.length() || (mul(m, b).length() == a.length() && mul(m, b) < a)) m = add(m, "1");
     while (mul(m, b).length() > a.length() || (mul(m, b).length() == a.length() && mul(m, b) > a)) m = sub(m, "1");
 
@@ -245,14 +296,58 @@ public:
   bool operator>=(const std::string &s) const { return !(*this < s); }
 };
 
-/* GCD & LCM */
-BigNum gcd(const BigNum &a, const BigNum &b) { return b == 0 ? a : gcd(b, a % b); }
-BigNum lcm(const BigNum &a, const BigNum &b) { return a / gcd(a, b) * b; }
+/**
+ * @brief Greatest common divisor
+ * @details Assume a, b are non-negative
+ * @param a First number
+ * @param b Second number
+ * @return Greatest common divisor of a and b
+ * @see https://en.wikipedia.org/wiki/Euclidean_algorithm
+ * @todo Support decimal numbers
+*/
+BigNum gcd(BigNum a, BigNum b) {
+  while (b != 0) {
+    BigNum r = a % b;
+    a = b;
+    b = r;
+  }
+  return a;
+}
 
-/* Absolute value */
-BigNum abs(const BigNum &bn) { return BigNum(true, bn.num); }
+/**
+ * @brief Least common multiple
+ * @details Assume a, b are non-negative
+ * @param a First number
+ * @param b Second number
+ * @return Least common multiple of a and b
+ * @see https://en.wikipedia.org/wiki/Least_common_multiple
+ * @todo Support decimal numbers
+*/
+BigNum lcm(const BigNum &a, const BigNum &b) {
+  return a / gcd(a, b) * b;
+}
 
-/* Power */
+/**
+ * @brief Absolute value
+ * @details Assume bn is non-negative
+ * @param bn Big number
+ * @return Absolute value of bn
+ * @see https://en.wikipedia.org/wiki/Absolute_value
+ * @todo Support decimal numbers
+*/
+BigNum abs(const BigNum &bn) {
+  return BigNum(true, bn.num);
+}
+
+/**
+ * @brief Power function
+ * @details Assume base, exp are non-negative
+ * @param base Base
+ * @param exp Exponent
+ * @return base ^ exp
+ * @see https://en.wikipedia.org/wiki/Exponentiation_by_squaring
+ * @todo Support decimal numbers
+*/
 BigNum pow(BigNum base, BigNum exp) {
   BigNum res(1);
   while (exp > 0) {
